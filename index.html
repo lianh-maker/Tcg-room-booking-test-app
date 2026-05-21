@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ADMINAPP | Room Booking</title>
+  <style>
+    :root {
+      --bg: #05080c;
+      --panel: rgba(18, 25, 33, 0.88);
+      --panel-2: rgba(24, 32, 42, 0.94);
+      --panel-3: rgba(12, 17, 24, 0.92);
+      --border: rgba(255, 255, 255, 0.13);
+      --border-soft: rgba(255, 255, 255, 0.08);
+      --text: #f5f7fb;
+      --muted: #aeb7c4;
+      --muted-2: #748091;
+      --orange: #ff6a00;
+      --orange-2: #ff8a1d;
+      --green: #43d17a;
+      --red: #f56565;
+      --blue: #438aff;
+      --purple: #9b5cff;
+      --yellow: #ffbd2e;
+      --shadow: 0 24px 70px rgba(0,0,0,0.45);
+      --radius: 24px;
+      --header-height: 78px;
+      --sidebar-width: 260px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 75% 5%, rgba(255,106,0,0.13), transparent 28%),
+        radial-gradient(circle at 50% 50%, rgba(57,125,255,0.06), transparent 42%),
+        linear-gradient(135deg, #020305 0%, #07111a 42%, #0b1017 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x: hidden;
+    }
+
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .topbar {
+      height: var(--header-height);
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 34px;
+      border-bottom: 1px solid rgba(255,106,0,0.8);
+      background: rgba(5, 8, 12, 0.86);
+      backdrop-filter: blur(18px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      letter-spacing: -1px;
+      text-transform: uppercase;
+    }
+
+    .brand-cog {
+      width: 47px;
+      height: 47px;
+      border-radius: 50%;
+      position: relative;
+      background: conic-gradient(from 0deg, var(--orange), var(--orange-2), var(--orange));
+      box-shadow: 0 0 22px rgba(255,106,0,0.36);
+      clip-path: polygon(50% 0%, 60% 15%, 78% 8%, 80% 27%, 98% 33%, 86% 48%, 98% 65%, 80% 70%, 78% 92%, 60% 84%, 50% 100%, 40% 84%, 22% 92%, 20% 70%, 2% 65%, 14% 48%, 2% 33%, 20% 27%, 22% 8%, 40% 15%);
+    }
+
+    .brand-cog::after {
+      content: "";
+      position: absolute;
+      inset: 13px;
+      border-radius: 50%;
+      background: #05080c;
+      box-shadow: inset 0 0 10px rgba(255,255,255,0.07);
+    }
+
+    .brand-text {
+      font-size: clamp(24px, 3vw, 38px);
+      font-weight: 950;
+      font-style: italic;
+      line-height: 1;
+      transform: skew(-7deg);
+      text-shadow: 0 2px 0 rgba(0,0,0,0.4), 0 0 18px rgba(255,255,255,0.08);
+    }
+
+    .brand-text span:first-child { color: #ffffff; }
+    .brand-text span:last-child { color: var(--orange); }
+
+    .user-area {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--muted);
+    }
+
+    .bell {
+      position: relative;
+      font-size: 23px;
+      line-height: 1;
+      opacity: 0.9;
+    }
+
+    .bell::after {
+      content: "3";
+      position: absolute;
+      top: -10px;
+      right: -12px;
+      background: var(--orange);
+      color: #fff;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      border: 2px solid #070b10;
+    }
+
+    .profile {
+      border-left: 1px solid rgba(255,255,255,0.18);
+      padding-left: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .profile strong { color: #fff; display: block; font-size: 14px; }
+    .profile span { font-size: 12px; }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+      min-height: calc(100vh - var(--header-height));
+    }
+
+    .sidebar {
+      padding: 34px 18px;
+      border-right: 1px solid rgba(255,255,255,0.09);
+      background: linear-gradient(180deg, rgba(9,13,20,0.92), rgba(7,10,15,0.86));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sidebar h4 {
+      margin: 0 0 22px 14px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+    }
+
+    .nav-item {
+      width: 100%;
+      min-height: 52px;
+      border: 0;
+      background: transparent;
+      color: #d9dee7;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border-radius: 10px;
+      padding: 0 14px;
+      margin-bottom: 8px;
+      text-align: left;
+      transition: 160ms ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background: rgba(255,255,255,0.08);
+      color: var(--orange-2);
+    }
+
+    .nav-item.active::before {
+      content: "";
+      position: absolute;
+      left: -18px;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--orange);
+      box-shadow: 0 0 18px rgba(255,106,0,0.6);
+    }
+
+    .nav-ico { width: 25px; text-align: center; font-size: 21px; }
+
+    .tcg-mark {
+      position: absolute;
+      bottom: 35px;
+      left: 34px;
+      z-index: 1;
+      color: white;
+    }
+
+    .tcg-watermark {
+      position: absolute;
+      bottom: 92px;
+      left: 26px;
+      width: 160px;
+      height: 160px;
+      opacity: 0.08;
+      background: #fff;
+      clip-path: polygon(50% 0%, 60% 15%, 78% 8%, 80% 27%, 98% 33%, 86% 48%, 98% 65%, 80% 70%, 78% 92%, 60% 84%, 50% 100%, 40% 84%, 22% 92%, 20% 70%, 2% 65%, 14% 48%, 2% 33%, 20% 27%, 22% 8%, 40% 15%);
+    }
+
+    .tcg-mark .tcg { font-size: 36px; font-weight: 950; letter-spacing: -1px; }
+    .tcg-mark .small { font-size: 9px; color: #e9edf4; line-height: 1.15; border-left: 1px solid rgba(255,255,255,0.45); padding-left: 10px; margin-left: 8px; display: inline-block; vertical-align: middle; }
+    .tcg-mark .mini-cog { color: var(--orange); }
+
+    main {
+      padding: 54px clamp(22px, 5vw, 64px);
+      max-width: 1350px;
+      width: 100%;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 22px;
+      margin-bottom: 32px;
+    }
+
+    .section-title h1 {
+      margin: 0;
+      font-size: clamp(34px, 4vw, 54px);
+      letter-spacing: -0.045em;
+    }
+
+    .orange-rule {
+      width: 42px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--orange);
+      margin: 14px 0 20px;
+      box-shadow: 0 0 18px rgba(255,106,0,0.42);
+    }
+
+    .section-title p { margin: 0; color: var(--muted); font-size: 18px; }
+
+    .mockup-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      color: #ffd4b4;
+      border: 1px solid rgba(255,106,0,0.35);
+      background: rgba(255,106,0,0.08);
+      border-radius: 999px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .room-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(210px, 1fr));
+      gap: 28px;
+      margin-bottom: 34px;
+    }
+
+    .room-card {
+      min-height: 245px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: linear-gradient(145deg, rgba(28,38,50,0.85), rgba(13,19,27,0.86));
+      box-shadow: var(--shadow);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 16px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .room-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(255,255,255,0.09), transparent 45%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .room-card::after {
+      content: "Open Calendar";
+      position: absolute;
+      bottom: 15px;
+      right: 17px;
+      color: rgba(255,255,255,0.46);
+      font-size: 12px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: 180ms ease;
+    }
+
+    .room-card:hover, .room-card:focus-visible, .room-card.active {
+      transform: translateY(-3px);
+      border-color: rgba(255,106,0,0.72);
+      box-shadow: 0 18px 70px rgba(255,106,0,0.12), var(--shadow);
+      outline: none;
+    }
+
+    .room-card:hover::after, .room-card:focus-visible::after, .room-card.active::after { opacity: 1; transform: translateY(0); }
+
+    .room-card.active .card-accent { opacity: 1; transform: scaleX(1); }
+
+    .card-accent {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 4px;
+      background: var(--orange);
+      opacity: 0;
+      transform: scaleX(0.45);
+      transform-origin: left;
+      transition: 180ms ease;
+      box-shadow: 0 0 20px rgba(255,106,0,0.8);
+    }
+
+    .room-icon {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 50px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 0 30px rgba(255,255,255,0.04), 0 12px 32px rgba(0,0,0,0.32);
+      position: relative;
+      z-index: 1;
+    }
+
+    .room-card h2 { margin: 0; font-size: 28px; letter-spacing: -0.03em; position: relative; z-index: 1; }
+    .room-card p { margin: -6px 0 0; color: var(--muted); font-size: 16px; position: relative; z-index: 1; }
+
+    .room-icon.boardroom { color: var(--orange); background: rgba(255,106,0,0.08); }
+    .room-icon.lunch { color: #78d94f; background: rgba(84,255,130,0.08); }
+    .room-icon.couch { color: var(--blue); background: rgba(67,138,255,0.09); }
+    .room-icon.pool { color: var(--purple); background: rgba(155,92,255,0.10); }
+    .room-icon.floor { color: var(--yellow); background: rgba(255,189,46,0.09); }
+
+    .booking-view {
+      border: 1px solid rgba(255,106,0,0.26);
+      border-radius: 24px;
+      background: linear-gradient(145deg, rgba(18,25,33,0.93), rgba(9,13,19,0.9));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: none;
+    }
+
+    .booking-view.open { display: block; }
+
+    .booking-header {
+      display: grid;
+      grid-template-columns: 1.1fr 1.6fr;
+      gap: 0;
+      border-bottom: 1px solid rgba(255,255,255,0.09);
+    }
+
+    .space-photo {
+      min-height: 280px;
+      padding: 22px;
+      border-right: 1px solid rgba(255,255,255,0.09);
+      background:
+        linear-gradient(135deg, rgba(255,106,0,0.08), transparent 38%),
+        rgba(255,255,255,0.02);
+    }
+
+    .photo-placeholder {
+      height: 100%;
+      min-height: 240px;
+      border: 1px dashed rgba(255,255,255,0.24);
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--muted);
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,0.05), transparent 42%),
+        rgba(2,5,9,0.35);
+    }
+
+    .photo-placeholder img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+      display: none;
+    }
+
+    .photo-placeholder.has-image img { display: block; }
+    .photo-placeholder.has-image .placeholder-copy { display: none; }
+
+    .placeholder-copy strong {
+      display: block;
+      color: #fff;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .upload-row {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      z-index: 2;
+    }
+
+    .file-btn, .ghost-btn, .primary-btn, .danger-btn {
+      border-radius: 13px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      min-height: 42px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: 160ms ease;
+    }
+
+    .file-btn:hover, .ghost-btn:hover { background: rgba(255,255,255,0.13); }
+    .file-btn input { display: none; }
+
+    .primary-btn {
+      border: 0;
+      background: linear-gradient(135deg, var(--orange), #ff7f16);
+      font-weight: 850;
+      box-shadow: 0 14px 32px rgba(255,106,0,0.25);
+    }
+
+    .primary-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .primary-btn:disabled { opacity: 0.48; cursor: not-allowed; transform: none; filter: none; }
+
+    .danger-btn {
+      background: rgba(245,101,101,0.12);
+      border-color: rgba(245,101,101,0.45);
+      color: #ffd0d0;
+    }
+
+    .space-summary {
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .space-summary h2 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 48px);
+      letter-spacing: -0.05em;
+    }
+
+    .space-summary p { color: var(--muted); margin: 8px 0 0; font-size: 17px; }
+
+    .space-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 11px;
+      margin-top: 24px;
+      grid-column: 1 / -1;
+    }
+
+    .stat-pill {
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.06);
+      color: #dce2ec;
+      padding: 11px 13px;
+      border-radius: 999px;
+      font-size: 13px;
+    }
+
+    .calendar-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 0;
+    }
+
+    .calendar-panel {
+      padding: 26px;
+      border-right: 1px solid rgba(255,255,255,0.09);
+      min-width: 0;
+    }
+
+    .booking-form-panel {
+      padding: 26px;
+      background: rgba(255,255,255,0.025);
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .controls label, .field label {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 7px;
+      font-weight: 750;
+    }
+
+    .date-input, .field input, .field textarea, .field select {
+      width: 100%;
+      min-height: 46px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      background: rgba(5, 9, 14, 0.88);
+      color: #fff;
+      padding: 0 14px;
+      outline: none;
+    }
+
+    .field textarea {
+      min-height: 90px;
+      resize: vertical;
+      padding-top: 12px;
+    }
+
+    .field { margin-bottom: 16px; }
+
+    .slot-legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 13px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      display: inline-block;
+      margin-right: 5px;
+      vertical-align: -1px;
+    }
+    .dot.available { background: rgba(67,209,122,0.75); }
+    .dot.booked { background: rgba(245,101,101,0.72); }
+    .dot.selected { background: transparent; border: 2px solid var(--orange); }
+
+    .time-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      max-height: 540px;
+      overflow: auto;
+      padding: 4px 4px 10px;
+      scrollbar-color: var(--orange) rgba(255,255,255,0.08);
+    }
+
+    .slot {
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(67,209,122,0.12);
+      color: #e9fff1;
+      min-height: 78px;
+      padding: 12px;
+      text-align: left;
+      transition: 140ms ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slot:hover { transform: translateY(-1px); border-color: rgba(67,209,122,0.45); }
+    .slot.selected { outline: 2px solid var(--orange); outline-offset: -2px; box-shadow: 0 0 0 3px rgba(255,106,0,0.10); }
+    .slot.booked {
+      background: rgba(245,101,101,0.15);
+      color: #ffe6e6;
+      border-color: rgba(245,101,101,0.22);
+    }
+
+    .slot strong { display: block; font-size: 15px; margin-bottom: 7px; }
+    .slot span { display: block; font-size: 12px; color: rgba(255,255,255,0.76); line-height: 1.28; }
+
+    .form-card-title {
+      margin: 0 0 8px;
+      font-size: 22px;
+      letter-spacing: -0.02em;
+    }
+
+    .selected-display {
+      border: 1px solid rgba(255,106,0,0.28);
+      background: rgba(255,106,0,0.08);
+      border-radius: 16px;
+      padding: 14px;
+      margin: 18px 0;
+      color: #ffe0c9;
+    }
+
+    .selected-display strong { color: #fff; display: block; margin-bottom: 5px; }
+
+    .form-actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .fine-print {
+      color: var(--muted-2);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 16px;
+    }
+
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      border: 1px solid rgba(255,106,0,0.35);
+      background: rgba(12, 18, 26, 0.94);
+      color: #fff;
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+      transform: translateY(24px);
+      opacity: 0;
+      pointer-events: none;
+      transition: 200ms ease;
+      z-index: 50;
+      max-width: 320px;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1050px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      main { padding-top: 34px; }
+      .room-grid { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+      .booking-header, .calendar-layout { grid-template-columns: 1fr; }
+      .space-photo, .calendar-panel { border-right: 0; border-bottom: 1px solid rgba(255,255,255,0.09); }
+    }
+
+    @media (max-width: 720px) {
+      :root { --header-height: auto; }
+      .topbar { position: relative; padding: 18px 16px; align-items: flex-start; gap: 16px; }
+      .profile { display: none; }
+      .brand-cog { width: 38px; height: 38px; }
+      .brand-text { font-size: 28px; }
+      main { padding: 26px 15px 40px; }
+      .section-title { display: block; }
+      .mockup-pill { margin-top: 18px; }
+      .room-grid { grid-template-columns: 1fr; gap: 16px; }
+      .room-card { min-height: 200px; }
+      .calendar-panel, .booking-form-panel, .space-summary, .space-photo { padding: 18px; }
+      .time-grid { grid-template-columns: 1fr; max-height: 500px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand" aria-label="ADMINAPP">
+      <div class="brand-cog" aria-hidden="true"></div>
+      <div class="brand-text"><span>ADMIN</span><span>APP</span></div>
+    </div>
+    <div class="user-area">
+      <div class="bell" title="Notifications" aria-hidden="true">♢</div>
+      <div class="profile">
+        <div class="avatar">JD</div>
+        <div><strong>James Dalton</strong><span>Operations Team</span></div>
+        <span>⌄</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <h4>MAIN</h4>
+      <button class="nav-item"><span class="nav-ico">⌂</span><span>Dashboard</span></button>
+      <button class="nav-item"><span class="nav-ico">👥</span><span>People</span></button>
+      <button class="nav-item"><span class="nav-ico">▣</span><span>Projects</span></button>
+      <button class="nav-item active"><span class="nav-ico">▦</span><span>Bookings</span></button>
+      <button class="nav-item"><span class="nav-ico">⬡</span><span>Assets</span></button>
+      <button class="nav-item"><span class="nav-ico">▥</span><span>Reports</span></button>
+      <button class="nav-item"><span class="nav-ico">⚙</span><span>Settings</span></button>
+      <div class="tcg-watermark" aria-hidden="true"></div>
+      <div class="tcg-mark"><span class="tcg">TCG<span class="mini-cog">⚙</span></span><span class="small">CREATIVE<br>TECHNICAL<br>PRODUCTION</span></div>
+    </aside>
+
+    <main>
+      <section class="section-title">
+        <div>
+          <h1>Room Booking</h1>
+          <div class="orange-rule"></div>
+          <p>Select a space to open its 15-minute booking calendar.</p>
+        </div>
+        <div class="mockup-pill">Mockup mode · Saves bookings in this browser</div>
+      </section>
+
+      <section class="room-grid" id="roomGrid" aria-label="Room selection buttons"></section>
+
+      <section class="booking-view" id="bookingView" aria-live="polite">
+        <div class="booking-header">
+          <div class="space-photo">
+            <div class="photo-placeholder" id="photoBox">
+              <img id="spaceImage" alt="Selected space photo" />
+              <div class="placeholder-copy">
+                <strong id="photoTitle">Space Photo Placeholder</strong>
+                <span>Add a real photo later for this booking space.</span>
+              </div>
+              <div class="upload-row">
+                <label class="file-btn">Upload Photo <input type="file" id="photoUpload" accept="image/*" /></label>
+                <button class="ghost-btn" id="clearPhoto" type="button">Clear</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-summary">
+            <div>
+              <h2 id="spaceName">Boardroom</h2>
+              <p id="spaceDescription">Seats up to 12</p>
+            </div>
+            <button class="ghost-btn" id="backToRooms" type="button">Back to rooms</button>
+            <div class="space-stats" id="spaceStats"></div>
+          </div>
+        </div>
+
+        <div class="calendar-layout">
+          <div class="calendar-panel">
+            <div class="controls">
+              <div>
+                <label for="bookingDate">Booking date</label>
+                <input class="date-input" type="date" id="bookingDate" />
+              </div>
+              <div class="slot-legend" aria-label="Slot legend">
+                <span><span class="dot available"></span>Available</span>
+                <span><span class="dot booked"></span>Booked</span>
+                <span><span class="dot selected"></span>Selected</span>
+              </div>
+            </div>
+            <div class="time-grid" id="timeGrid" aria-label="15-minute booking time slots"></div>
+          </div>
+
+          <aside class="booking-form-panel">
+            <h3 class="form-card-title">Booking Form</h3>
+            <p class="fine-print" style="margin-top:0;">Pick one 15-minute slot, enter a name, then save the booking.</p>
+
+            <div class="selected-display" id="selectedDisplay">
+              <strong>No time selected</strong>
+              Choose an available slot from the calendar.
+            </div>
+
+            <div class="field">
+              <label for="bookedBy">Name</label>
+              <input id="bookedBy" type="text" placeholder="Enter staff member name" autocomplete="name" />
+            </div>
+
+            <div class="field">
+              <label for="bookingPurpose">Reason / Notes</label>
+              <textarea id="bookingPurpose" placeholder="Example: team meeting, lunch setup, training, floor planning..."></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button class="primary-btn" id="saveBooking" type="button" disabled>Book Selected Slot</button>
+              <button class="danger-btn" id="removeBooking" type="button" disabled>Remove Selected Booking</button>
+            </div>
+
+            <p class="fine-print">This first version uses browser storage only. Later, this form can be connected to a shared database, Google Calendar, Microsoft/Outlook calendar, SharePoint list, Odoo, or another backend so all staff see the same live bookings.</p>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast">Saved.</div>
+
+  <script>
+    const rooms = [
+      {
+        id: "boardroom",
+        name: "Boardroom",
+        desc: "Seats up to 12",
+        icon: "☷",
+        iconClass: "boardroom",
+        stats: ["15-minute slots", "Meetings", "TV / whiteboard placeholder", "Staff booking"]
+      },
+      {
+        id: "lunch-room",
+        name: "Lunch Room",
+        desc: "Shared space",
+        icon: "🍴",
+        iconClass: "lunch",
+        stats: ["15-minute slots", "Breaks", "Shared use", "Staff booking"]
+      },
+      {
+        id: "couch-room",
+        name: "Couch Room",
+        desc: "Relax & collaborate",
+        icon: "🛋",
+        iconClass: "couch",
+        stats: ["15-minute slots", "Collaboration", "Quiet space", "Staff booking"]
+      },
+      {
+        id: "pool-table",
+        name: "Pool Table",
+        desc: "Break area",
+        icon: "🎱",
+        iconClass: "pool",
+        stats: ["15-minute slots", "Break booking", "Recreation", "Staff booking"]
+      },
+      {
+        id: "production-floor",
+        name: "Production Floor",
+        desc: "Open workspace",
+        icon: "▰",
+        iconClass: "floor",
+        stats: ["15-minute slots", "Floor access", "Training / tours", "Staff booking"]
+      }
+    ];
+
+    const grid = document.getElementById("roomGrid");
+    const bookingView = document.getElementById("bookingView");
+    const spaceName = document.getElementById("spaceName");
+    const spaceDescription = document.getElementById("spaceDescription");
+    const spaceStats = document.getElementById("spaceStats");
+    const bookingDate = document.getElementById("bookingDate");
+    const timeGrid = document.getElementById("timeGrid");
+    const selectedDisplay = document.getElementById("selectedDisplay");
+    const bookedBy = document.getElementById("bookedBy");
+    const bookingPurpose = document.getElementById("bookingPurpose");
+    const saveBooking = document.getElementById("saveBooking");
+    const removeBooking = document.getElementById("removeBooking");
+    const photoUpload = document.getElementById("photoUpload");
+    const photoBox = document.getElementById("photoBox");
+    const spaceImage = document.getElementById("spaceImage");
+    const photoTitle = document.getElementById("photoTitle");
+    const clearPhoto = document.getElementById("clearPhoto");
+    const toast = document.getElementById("toast");
+
+    let activeRoom = null;
+    let selectedSlot = null;
+
+    function todayString() {
+      const d = new Date();
+      const offset = d.getTimezoneOffset();
+      const local = new Date(d.getTime() - offset * 60000);
+      return local.toISOString().slice(0, 10);
+    }
+
+    function storageKey(roomId, date, time) {
+      return `adminapp-room-booking::${roomId}::${date}::${time}`;
+    }
+
+    function photoKey(roomId) {
+      return `adminapp-room-photo::${roomId}`;
+    }
+
+    function getBooking(roomId, date, time) {
+      const raw = localStorage.getItem(storageKey(roomId, date, time));
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch { return null; }
+    }
+
+    function setBooking(roomId, date, time, booking) {
+      localStorage.setItem(storageKey(roomId, date, time), JSON.stringify(booking));
+    }
+
+    function deleteBooking(roomId, date, time) {
+      localStorage.removeItem(storageKey(roomId, date, time));
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2300);
+    }
+
+    function makeTimeSlots() {
+      const slots = [];
+      const start = 8 * 60;
+      const end = 17 * 60;
+      for (let mins = start; mins <= end; mins += 15) {
+        const h24 = Math.floor(mins / 60);
+        const m = mins % 60;
+        const hour12 = ((h24 + 11) % 12) + 1;
+        const ampm = h24 >= 12 ? "PM" : "AM";
+        slots.push(`${hour12}:${String(m).padStart(2, "0")} ${ampm}`);
+      }
+      return slots;
+    }
+
+    function renderRooms() {
+      grid.innerHTML = "";
+      rooms.forEach(room => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "room-card";
+        btn.dataset.roomId = room.id;
+        btn.innerHTML = `
+          <div class="room-icon ${room.iconClass}">${room.icon}</div>
+          <h2>${room.name}</h2>
+          <p>${room.desc}</p>
+          <div class="card-accent"></div>
+        `;
+        btn.addEventListener("click", () => openRoom(room.id));
+        grid.appendChild(btn);
+      });
+    }
+
+    function openRoom(roomId) {
+      activeRoom = rooms.find(room => room.id === roomId);
+      selectedSlot = null;
+      document.querySelectorAll(".room-card").forEach(card => card.classList.toggle("active", card.dataset.roomId === roomId));
+      spaceName.textContent = activeRoom.name;
+      spaceDescription.textContent = activeRoom.desc;
+      photoTitle.textContent = `${activeRoom.name} Photo Placeholder`;
+      spaceStats.innerHTML = activeRoom.stats.map(stat => `<span class="stat-pill">${stat}</span>`).join("");
+      bookingView.classList.add("open");
+      loadSpacePhoto();
+      renderTimeGrid();
+      updateSelectedDisplay();
+      setTimeout(() => bookingView.scrollIntoView({ behavior: "smooth", block: "start" }), 70);
+    }
+
+    function loadSpacePhoto() {
+      if (!activeRoom) return;
+      const saved = localStorage.getItem(photoKey(activeRoom.id));
+      if (saved) {
+        spaceImage.src = saved;
+        photoBox.classList.add("has-image");
+      } else {
+        spaceImage.removeAttribute("src");
+        photoBox.classList.remove("has-image");
+      }
+    }
+
+    function selectSlot(time) {
+      if (!activeRoom) return;
+      selectedSlot = time;
+      const booking = getBooking(activeRoom.id, bookingDate.value, time);
+      if (booking) {
+        bookedBy.value = booking.name || "";
+        bookingPurpose.value = booking.notes || "";
+      } else {
+        bookedBy.value = "";
+        bookingPurpose.value = "";
+      }
+      renderTimeGrid();
+      updateSelectedDisplay();
+    }
+
+    function updateSelectedDisplay() {
+      if (!selectedSlot || !activeRoom) {
+        selectedDisplay.innerHTML = `<strong>No time selected</strong>Choose an available slot from the calendar.`;
+        saveBooking.disabled = true;
+        removeBooking.disabled = true;
+        return;
+      }
+      const booking = getBooking(activeRoom.id, bookingDate.value, selectedSlot);
+      if (booking) {
+        selectedDisplay.innerHTML = `<strong>${activeRoom.name} · ${selectedSlot}</strong>Booked by ${escapeHtml(booking.name)}${booking.notes ? `<br><span>${escapeHtml(booking.notes)}</span>` : ""}`;
+        saveBooking.textContent = "Update Selected Booking";
+        saveBooking.disabled = false;
+        removeBooking.disabled = false;
+      } else {
+        selectedDisplay.innerHTML = `<strong>${activeRoom.name} · ${selectedSlot}</strong>Available 15-minute slot on ${formatDate(bookingDate.value)}.`;
+        saveBooking.textContent = "Book Selected Slot";
+        saveBooking.disabled = false;
+        removeBooking.disabled = true;
+      }
+    }
+
+    function renderTimeGrid() {
+      if (!activeRoom) return;
+      const date = bookingDate.value;
+      timeGrid.innerHTML = "";
+      makeTimeSlots().forEach(time => {
+        const booking = getBooking(activeRoom.id, date, time);
+        const slot = document.createElement("button");
+        slot.type = "button";
+        slot.className = `slot${booking ? " booked" : ""}${selectedSlot === time ? " selected" : ""}`;
+        slot.innerHTML = booking
+          ? `<strong>${time}</strong><span>Booked by ${escapeHtml(booking.name)}</span>${booking.notes ? `<span>${escapeHtml(booking.notes)}</span>` : ""}`
+          : `<strong>${time}</strong><span>Available</span><span>15 minutes</span>`;
+        slot.addEventListener("click", () => selectSlot(time));
+        timeGrid.appendChild(slot);
+      });
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return "selected date";
+      const d = new Date(dateStr + "T12:00:00");
+      return d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric", year: "numeric" });
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    saveBooking.addEventListener("click", () => {
+      if (!activeRoom || !selectedSlot) return;
+      const name = bookedBy.value.trim();
+      if (!name) {
+        showToast("Please enter a name before booking.");
+        bookedBy.focus();
+        return;
+      }
+      setBooking(activeRoom.id, bookingDate.value, selectedSlot, {
+        roomId: activeRoom.id,
+        roomName: activeRoom.name,
+        date: bookingDate.value,
+        time: selectedSlot,
+        name,
+        notes: bookingPurpose.value.trim(),
+        updatedAt: new Date().toISOString()
+      });
+      renderTimeGrid();
+      updateSelectedDisplay();
+      showToast(`${activeRoom.name} booked for ${selectedSlot}.`);
+    });
+
+    removeBooking.addEventListener("click", () => {
+      if (!activeRoom || !selectedSlot) return;
+      deleteBooking(activeRoom.id, bookingDate.value, selectedSlot);
+      bookedBy.value = "";
+      bookingPurpose.value = "";
+      renderTimeGrid();
+      updateSelectedDisplay();
+      showToast("Booking removed.");
+    });
+
+    bookingDate.addEventListener("change", () => {
+      selectedSlot = null;
+      bookedBy.value = "";
+      bookingPurpose.value = "";
+      renderTimeGrid();
+      updateSelectedDisplay();
+    });
+
+    photoUpload.addEventListener("change", event => {
+      if (!activeRoom) return;
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        localStorage.setItem(photoKey(activeRoom.id), reader.result);
+        loadSpacePhoto();
+        showToast(`${activeRoom.name} photo saved in this browser.`);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    clearPhoto.addEventListener("click", () => {
+      if (!activeRoom) return;
+      localStorage.removeItem(photoKey(activeRoom.id));
+      photoUpload.value = "";
+      loadSpacePhoto();
+      showToast("Photo placeholder reset.");
+    });
+
+    document.getElementById("backToRooms").addEventListener("click", () => {
+      bookingView.classList.remove("open");
+      document.querySelectorAll(".room-card").forEach(card => card.classList.remove("active"));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    bookingDate.value = todayString();
+    renderRooms();
+  </script>
+</body>
+</html>
